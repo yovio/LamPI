@@ -1,4 +1,4 @@
-LamPI
-=====
+platenspeler.github.io
+======================
 
-LamPI Controller for 433MHz devices
+SIte for LamPI project

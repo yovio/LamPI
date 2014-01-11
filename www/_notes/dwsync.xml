@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="backend_ics.php" server="192.168.2.11//raid0/data/htdocs/" local="130223222543885052" remote="130223280950000000" />
+<file name="backend_sql.php" server="192.168.2.11//raid0/data/htdocs/" local="130223246886427366" remote="130223280950000000" />
+<file name="backend_ics.php" server="192.168.2.11//raid/data/htdocs/" local="130223363886287218" remote="130224053410000000" />
+<file name="backend_rasp.php" server="192.168.2.11//raid/data/htdocs/" local="130223518586814579" remote="130224053410000000" />
+<file name="backend_sql.php" server="192.168.2.11//raid/data/htdocs/" local="130223246886427366" remote="130224053410000000" />
+<file name="backend_ics.php" server="192.168.2.102//var/www/" local="130228353102367493" remote="130228353140000000" />
+<file name="backend_rasp.php" server="192.168.2.102//var/www/" local="130231195064315674" remote="130232098990000000" />
+<file name="backend_sql.php" server="192.168.2.102//var/www/" local="130233951797339071" remote="130233951880000000" />
+<file name="index.html" server="192.168.2.102//var/www/" local="130233056332362768" remote="130233056870000000" />
+<file name="backend_cfg.php" server="192.168.2.102//var/www/" local="130233953257827004" remote="130233953310000000" />
+<file name="backend_rasp.php" server="192.168.2.102//home/pi/www/" local="130234104291601062" remote="130235641720000000" />
+<file name="index.html" server="192.168.2.102//home/pi/www/" local="130237225996443509" remote="130237262310000000" />
+<file name="apple-touch-icon.png" server="192.168.2.102//home/pi/www/" local="130234670439178646" remote="130234670600000000" />
+<file name="backend_cfg.php" server="192.168.2.102//home/pi/www/" local="130236202012635479" remote="130236202140000000" />
+<file name="backend_ics.php" server="192.168.2.102//home/pi/www/" local="130236210425775397" remote="130236210470000000" />
+<file name="backend_sql.php" server="192.168.2.102//home/pi/www/" local="130235338765216166" remote="130235641770000000" />
+<file name="Licensing - Copyright.txt" server="192.168.2.102//home/pi/www/" local="130223662072524919" remote="130235642230000000" />
+<file name="apple-touch-icon.png" server="192.168.2.102//home/pi/" local="130234670439178646" remote="130247022570000000" />
+<file name="backend_cfg.php" server="192.168.2.102//home/pi/" local="130250889726009422" remote="130250889730000000" />
+<file name="backend_ics.php" server="192.168.2.102//home/pi/" local="130241328321759500" remote="130257150590000000" />
+<file name="backend_rasp.php" server="192.168.2.102//home/pi/" local="130257104734379606" remote="130257150640000000" />
+<file name="backend_sql.php" server="192.168.2.102//home/pi/" local="130255326304503572" remote="130258101190000000" />
+<file name="index.html" server="192.168.2.102//home/pi/" local="130254330183895727" remote="130254330220000000" />
+<file name="Licensing - Copyright.txt" server="192.168.2.102//home/pi/" local="130223662072524919" remote="130247022860000000" />
+<file name="backend_lib.php" server="192.168.2.102//home/pi/" local="130258792438586365" remote="130258792450000000" />
+<file name="LamPI-daemon.php" server="192.168.2.102//home/pi/" local="130263782637014440" remote="130263782770000000" />
+<file name=".htaccess" server="192.168.2.102//home/pi/" local="130243987262412322" remote="130247022570000000" />
+<file name="backend_set.php" server="192.168.2.102//home/pi/" local="130255291107946207" remote="130255312680000000" />
+<file name="LamPI-daemon.php" server="192.168.2.101//home/pi/" local="130267278911080505" remote="130267278910000000" />
+<file name="index.html" server="192.168.2.101//home/pi/" local="130265017899263856" remote="130265018410000000" />
+<file name="backend_cfg.php" server="192.168.2.101//home/pi/" local="130267278807570359" remote="130267278790000000" />
+<file name="backend_lib.php" server="192.168.2.101//home/pi/" local="130266881908211237" remote="130267278910000000" />
+<file name="index.html" server="192.168.2.51//home/pi/" local="130316156008523663" remote="130323731910000000" />
+<file name="backend_cfg.php" server="192.168.2.51//home/pi/" local="130312677616396937" remote="130316139260000000" />
+<file name="backend_lib.php" server="192.168.2.51//home/pi/" local="130330876667253315" remote="130334359540000000" />
+<file name="LamPI-daemon.php" server="192.168.2.51//home/pi/" local="130337565205723731" remote="130338245960000000" />
+<file name="backend_rasp.php" server="192.168.2.51//home/pi/" local="130272508066437876" remote="130316139260000000" />
+<file name="backend_set.php" server="192.168.2.51//home/pi/" local="130316580650918968" remote="130316580690000000" />
+<file name="backend_sql.php" server="192.168.2.51//home/pi/" local="130298694290171531" remote="130316139260000000" />
+<file name=".htaccess" server="192.168.2.51//home/pi/" local="130243987262412322" remote="130316139260000000" />
+<file name="apple-touch-icon.png" server="192.168.2.51//home/pi/" local="130234670439178646" remote="130316139260000000" />
+<file name="backend_ics.php" server="192.168.2.51//home/pi/" local="130299825291404925" remote="130316139260000000" />
+<file name="Licensing - Copyright.txt" server="192.168.2.51//home/pi/" local="130223662072524919" remote="130316139280000000" />
+<file name="protocol.txt" server="192.168.2.51//home/pi/" local="130279513725262081" remote="130316139280000000" />
+<file name="backend_cfg.php" server="192.168.2.52//home/pi/" local="130312677616396937" remote="130338245270000000" />
+<file name="backend_lib.php" server="192.168.2.52//home/pi/" local="130330876667253315" remote="130334699970000000" />
+<file name="LamPI-daemon.php" server="192.168.2.52//home/pi/" local="130337565205723731" remote="130338245750000000" />
+<file name="backend_set.php" server="192.168.2.52//home/pi/" local="130316580650918968" remote="130338245280000000" />
+<file name="index2.html" server="192.168.2.52//home/pi/" local="130327055129135907" remote="130338245290000000" />
+<file name="phpinfo.php" server="192.168.2.52//home/pi/" local="130220040330000000" remote="130338245750000000" />
+<file name="backend_sql.php" server="192.168.2.52//home/pi/" local="130298694290171531" remote="130338245280000000" />
+<file name="backend_ics.php" server="192.168.2.52//home/pi/" local="130299825291404925" remote="130338245270000000" />
+<file name="LamPI-1.7.js" server="192.168.2.51//home/pi/" local="130328725739891092" remote="130334359530000000" />
+<file name="index2.html" server="192.168.2.51//home/pi/" local="130327055129135907" remote="130334359530000000" />
+<file name="phpinfo.php" server="192.168.2.51//home/pi/" local="130220040330000000" remote="130316139280000000" />
+<file name="LamPI-1.7.js" server="192.168.2.53//home/pi/" local="130328725739891092" remote="130328725740000000" />
+<file name="index2.html" server="192.168.2.53//home/pi/" local="130327055129135907" remote="130333056970000000" />
+<file name="backend_cfg.php" server="192.168.2.53//home/pi/" local="130312677616396937" remote="130330906840000000" />
+<file name="backend_lib.php" server="192.168.2.53//home/pi/" local="130330876667253315" remote="130330906910000000" />
+<file name="LamPI-daemon.php" server="192.168.2.53//home/pi/" local="130337565205723731" remote="130337565600000000" />
+<file name="LamPI-1.7.js" server="192.168.2.52//home/pi/" local="130336857897305419" remote="130338245290000000" />
+<file name=".htaccess" server="192.168.2.52//home/pi/" local="130243987262412322" remote="130338245270000000" />
+<file name="apple-touch-icon.png" server="192.168.2.52//home/pi/" local="130234670439178646" remote="130338245270000000" />
+<file name="backend_rasp.php" server="192.168.2.52//home/pi/" local="130272508066437876" remote="130338245280000000" />
+<file name="index.html" server="192.168.2.52//home/pi/" local="130316156008523663" remote="130338245280000000" />
+<file name="Licensing - Copyright.txt" server="192.168.2.52//home/pi/" local="130223662072524919" remote="130338245750000000" />
+<file name="protocol.txt" server="192.168.2.52//home/pi/" local="130279513725262081" remote="130338245750000000" />
+<file name="README.md" server="192.168.2.52//home/pi/" local="130336720914098072" remote="130338245750000000" />
+</dwsync>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<dwsync>
+<file name="Makefile" server="192.168.2.51//home/pi/" local="130337280221529881" remote="130338245920000000" />
+<file name="README.TXT" server="192.168.2.51//home/pi/" local="130307432513864548" remote="130338245920000000" />
+<file name="sniffer.c" server="192.168.2.51//home/pi/" local="130337631014629839" remote="130338245920000000" />
+<file name="sniffer.c" server="192.168.2.53//home/pi/" local="130337631014629839" remote="130337631010000000" />
+<file name="LamPI.h" server="192.168.2.53//home/pi/" local="130336682298245534" remote="130337276540000000" />
+<file name="Makefile" server="192.168.2.53//home/pi/" local="130337280221529881" remote="130337280310000000" />
+<file name="cJSON.h" server="192.168.2.53//home/pi/" local="130334019321415933" remote="130337276540000000" />
+<file name="cJSON.c" server="192.168.2.53//home/pi/" local="130334019321640937" remote="130337276540000000" />
+<file name="cJSON.c" server="192.168.2.51//home/pi/" local="130334019321640937" remote="130338245920000000" />
+<file name="cJSON.h" server="192.168.2.51//home/pi/" local="130334019321415933" remote="130338245920000000" />
+<file name="LamPI.h" server="192.168.2.51//home/pi/" local="130336682298245534" remote="130338245920000000" />
+<file name="snif_kopou.c" server="192.168.2.51//home/pi/" local="130334010881833772" remote="130338245920000000" />
+<file name="transmitter.c" server="192.168.2.51//home/pi/" local="130336868378146855" remote="130338245920000000" />
+<file name="cJSON.c" server="192.168.2.52//home/pi/" local="130334019321640937" remote="130338245210000000" />
+<file name="cJSON.h" server="192.168.2.52//home/pi/" local="130334019321415933" remote="130338245210000000" />
+<file name="LamPI.h" server="192.168.2.52//home/pi/" local="130336682298245534" remote="130338245210000000" />
+<file name="Makefile" server="192.168.2.52//home/pi/" local="130337280221529881" remote="130338245210000000" />
+<file name="README.TXT" server="192.168.2.52//home/pi/" local="130307432513864548" remote="130338245210000000" />
+<file name="sniffer.c" server="192.168.2.52//home/pi/" local="130337631014629839" remote="130338245210000000" />
+<file name="snif_kopou.c" server="192.168.2.52//home/pi/" local="130334010881833772" remote="130338245210000000" />
+<file name="transmitter.c" server="192.168.2.52//home/pi/" local="130336868378146855" remote="130338245210000000" />
+<file name="README.TXT" server="192.168.2.53//home/pi/" local="130307432513864548" remote="130337276540000000" />
+<file name="snif_kopou.c" server="192.168.2.53//home/pi/" local="130334010881833772" remote="130337276540000000" />
+<file name="transmitter.c" server="192.168.2.53//home/pi/" local="130336868378146855" remote="130337276540000000" />
+</dwsync>

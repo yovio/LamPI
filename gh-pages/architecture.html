@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>LamPI 433Mhz controller for RaspberryPI</title>
+</head>
+
+<body>
+
+<h1>LamPI Architecture</h1>
+<h5>LamPI is a Home Automation project for switching equipment in the house over 444 MHz senders/transmitters on a RaspberryPI.</h5>
+<p><img src="room_screen_grey.JPG" width="962" height="632" /></p>
+<p>As you see, the GUI interface is designed to operate (and manage) all tasks for the connected devices and minimize the need for manual changing of configuration files etc. let alone making configuration changes at compile time.</p>
+<p>In case I missed something, please send me an email or make a note on this page. For the moment I'm the only author of LamPI so it can take a few days before I answer...</p>
+<p>&nbsp;</p>
+<h1>Main LamPI Functions</h1>
+<ul>
+  <li>Initial Setup</li>
+  <li><a href="rooms.html">The Rooms Screen</a></li>
+  <li>The Scenes Screen</li>
+  <li>The Timers Screen</li>
+  <li>The Handsets Screen</li>
+  <li>The Options Screen</li>
+</ul>
+<h1>What Platform does LamPI run on?</h1>
+<ul>
+  <li>The webGUI of LamPI runs on every webserver in your network as it is implemented in Javascript/jQuery. That means that if you install it on a webserver in your netwerk you can access the GUI User Interface from every browser in your network (and soon also from the internet). By default, teh webserver runs fine on the RaspberryPI (you need the Raspberry anyway).<br>
+  <strong>The current setup works VERY well on iPad.</strong></li>
+  <li>If you want, you can setup the MySQL database on another server (that is what I did), but this is optional.</li>
+  <li>The low-level device functions for transmitter and receiver, will at the moment only run on the RaspberryPI, although making an Arduino version is probably not much work. The executables are all found in the ~/exe directory. The source code for these functions can be found in the ~/receivers directory.</li>
+</ul>
+<p>&nbsp;</p>
+<h1>Architectural Considerations</h1>
+<p>I did make an architecture document</p>
+<h1>&nbsp;</h1>
+</body>
+</html>

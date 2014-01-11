@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>LamPI 433Mhz controller for RaspberryPI</title>
+</head>
+
+<body>
+
+<h1>Transceiver interface</h1>
+<p>This part of the documentation describes the use of the lower-level &quot;transceiver&quot; functions that enable transmitting and receiving 433MHz messages using a shell/executable interface.</p>
+<p>The code is written in C, with source location in ~/receivers directory and with compiled code available in ~/exe subdirectory. You can compile and install the sources as follows:</p>
+<p>&gt; cd ~/receivers<br>
+&gt; cd sniffer<br>
+&gt; make</p>
+<p>and to install use the following command:</p>
+<p>&gt; sudo make install</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h1>What interfaces are available?</h1>
+<p>This is different for the transmit or receiver function, and it also differs whether you just want to send messages using the commandline or whether you want some sort of daemon function that watches a well-known socket and based on incoming messages for a certain brand of equipment will use the correct transmitter command.</p>
+<p>So let me explain.</p>
+<ul>
+  <li>LamPI-receiver daemon; read handsets and transmits device commands over sockets on default port 5000</li>
+  <li>Use LamPI-receiver as a stand-alone shell function to see incoming messages, timing and see statistics</li>
+  <li>Use the shell transmitter executables to send single command to your connected devices</li>
+</ul>
+<h1>LamPI-receiver as daemon</h1>
+<p>The command to use to have LamPI-receiver behave as a daemon is:</p>
+<p><code>&gt; cd ~/exe ; ./LamPI-receiver -d &amp;</code></p>
+<p>which will start LamPI-receiver as a background process. If you like to start LamPI-receiver and get more information in log files:</p>
+<p>&gt; cd ~/exe; sh ./LamPI-receiver -d -s &gt; LamPI-receiver.log 2&gt;&amp;1 &amp;</p>
+<h1>LamPI-receiver as a sniffer</h1>
+<p>LamPI-receiver actually should have been called LamPI-transceiver as the executable contains both transmitter and receiver functions. If you run LamPI-receiver as a command in a shell, it behaves as a receiver for incoming messages. Using the appropriate flags to the command it will behave as a sniffer for incoming wireless traffic and it will show brand, address, unit and status (On/OFF/dimlevel) information for every incoing 433MHz message that is recognized.</p>
+<p>At the time of writing, the LamPI-receiver supports the following handsets/remotes:</p>
+<ul>
+  <li>klikaanklikuit.nl remote controls (kaku for short)</li>
+  <li>Action (or impuls) handsets</li>
+  <li>Livolo keychains</li>
+  <li>Kopou keychain</li>
+  <li>several other keychain FOB's or remotes that have similar message format as action</li>
+</ul>
+<h1>Use transmitters on commandline (example)</h1>
+<p>There are several transmitters supported at the moment. Some I ported from Arduino example library in C++, some I wrote myself.</p>
+<p>&gt; cd ~/exe<br>
+  &gt; ./kaku -g 100 -n 1 on<br>
+&gt; ./kaku -g 100 -n 2 8<br>
+&gt; ./kaku -g 100 -n 2 off</p>
+<p><br>
+</p>
+</body>
+</html>
