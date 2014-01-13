@@ -6,11 +6,18 @@
 <file name="PI-install" server="192.168.2.51//home/pi/" local="130319453301455598" remote="130319453880000000" />
 <file name="PI-run" server="192.168.2.51//home/pi/" local="130314398757447871" remote="130315989620000000" />
 <file name="PI-clr" server="192.168.2.51//home/pi/" local="130314466263163132" remote="130315989580000000" />
-<file name="PI-rcv" server="192.168.2.52//home/pi/" local="130314398860658016" remote="130334696060000000" />
-<file name="PI-run" server="192.168.2.52//home/pi/" local="130314398757447871" remote="130334696150000000" />
-<file name="PI-clr" server="192.168.2.52//home/pi/" local="130314466263163132" remote="130334695800000000" />
-<file name="PI-install" server="192.168.2.52//home/pi/" local="130319670843588297" remote="130334695820000000" />
+<file name="PI-rcv" server="192.168.2.52//home/pi/" local="130314398860658016" remote="130340742040000000" />
+<file name="PI-run" server="192.168.2.52//home/pi/" local="130314398757447871" remote="130340742040000000" />
+<file name="PI-clr" server="192.168.2.52//home/pi/" local="130314466263163132" remote="130340742040000000" />
+<file name="PI-install" server="192.168.2.52//home/pi/" local="130319670843588297" remote="130340742040000000" />
 <file name="PI-log" server="192.168.2.51//home/pi/" local="130314422962151889" remote="130315989620000000" />
 <file name="PI-rcv" server="192.168.2.51//home/pi/" local="130314398860658016" remote="130315989620000000" />
-<file name="PI-log" server="192.168.2.52//home/pi/" local="130314422962151889" remote="130334695820000000" />
+<file name="PI-log" server="192.168.2.52//home/pi/" local="130314422962151889" remote="130340742040000000" />
+<file name="PI-rcv" server="192.168.2.53//home/pi/" local="130314398860658016" remote="130340970850000000" />
+<file name="PI-run" server="192.168.2.53//home/pi/" local="130314398757447871" remote="130340970850000000" />
+<file name="PI-log" server="192.168.2.53//home/pi/" local="130314422962151889" remote="130340970850000000" />
+<file name="README.md" server="192.168.2.52//home/pi/" local="130336708062476410" remote="130340742050000000" />
+<file name="PI-clr" server="192.168.2.53//home/pi/" local="130314466263163132" remote="130340970740000000" />
+<file name="PI-install" server="192.168.2.53//home/pi/" local="130319670843588297" remote="130340970810000000" />
+<file name="README.md" server="192.168.2.53//home/pi/" local="130336708062476410" remote="130340970850000000" />
 </dwsync>

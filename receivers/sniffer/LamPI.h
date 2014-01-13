@@ -40,10 +40,12 @@ extern "C"
 #define P_ACTION 150							// Pulse time for Action/Impulse receivers
 #define P_KAKU 260								// Pulse time for Kaku receivers
 
-// Define Row Indexes for statistics ARRAY
+// Define Row Indexes for statistics ARRAY, make sure I_MAX_ROWS is larger than the number
+// of receivers specified below....
 // 	0=kaku, 1=action/impuls, 2=blokker, 3=kiku (=kaku old), 
-//	4=elro, 5=livolo, 6=kopou
+//	4=elro, 5=livolo, 6=kopou, 7=wt-440H
 #define I_MAX_ROWS 10
+
 #define I_KAKU 0
 #define I_ACTION 1
 #define I_BLOKKER  2
@@ -51,12 +53,12 @@ extern "C"
 #define I_ELRO 4
 #define I_LIVOLO 5
 #define I_KOPOU 6
+#define I_WT440H 7
 
-// Define Columns Indexes for statistics
-//	0=message_count, 1=pulse_count, 
-//	2=pulses_short, 3=min_short, 4=avg_short, 5=max_short, 
-//	6=pulses_long, 7=min_long, 8=avg_long, 9=max_long
-#define I_MAX_COLS 13
+// Define Columns Indexes for statistics, I_MAX_COLS must be equal or larger than number of parameters
+// specified below.
+#define I_MAX_COLS 15
+
 #define I_MSGS 0
 #define I_PULSES 1
 #define I_CNT_SHORT 2
@@ -69,6 +71,7 @@ extern "C"
 #define I_AVG_LONG 9
 #define I_MAX_LONG 10
 #define I_SUM_LONG 11
+#define I_MSGS_DISCARD 12
 
 
 // Define Buffer Sizes

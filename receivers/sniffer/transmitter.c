@@ -229,7 +229,7 @@ int read_socket_and_transmit(int sockfd)
 	// If we run in daemon, the interrupt handler outputs to the LamPI-daemon directly
 	// so this program ONLY needs to sleep in that case to save cpu cycles
 	//
-	if (debug == 1) {
+	if (debug > 1) {
 		printf("read_sock_and_transmit:: transaction: %d, sleep: %d, stop_ints: %d\n",
 						socktcnt, SLEEP, stop_ints);
 		fflush (stdout);

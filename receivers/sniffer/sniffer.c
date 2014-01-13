@@ -97,10 +97,6 @@ static volatile int p_index = 0;				// Counter of pulses in interrupt routine. I
 static volatile int r_index = 0;				// Read pointer in the circular array pulse_array;
 static volatile int duration = 0;				// actual duration of this edge interrupt since the previous edge
 
-static volatile int footer = 0;
-static volatile int header = 500;
-static volatile int pulse_long = 300;
-
 static int dflg = 0;							// Daemon
 static int cflg = 0;							// Check
 
@@ -155,8 +151,10 @@ int init_statistics(int statistics[I_MAX_ROWS][I_MAX_COLS])
 int add_statistics(int row, int split, int start, int length)
 {
 	int i;
+	statistics[row][I_MSGS]++;
 	for (i=0; i<length; i++)
 	{
+		statistics[row][I_PULSES]++;
 		int p = pulse_array[(start+i)%MAXDATASIZE];
 		if (p < split)
 		{
@@ -191,7 +189,6 @@ int add_statistics(int row, int split, int start, int length)
 			statistics[row][I_SUM_LONG] += p;
 			statistics[row][I_CNT_LONG] ++;
 			statistics[row][I_AVG_LONG]= (int) statistics[row][I_SUM_LONG] / statistics[row][I_CNT_LONG];
-		
 		}
 	}
 	return(0);	
@@ -209,12 +206,16 @@ int print_statistics(int row)
 	printf("\t\t\t MIN \t AVG \t MAX\n");
 	printf("Short Pulse Length:\t%4d\t%4d\t%4d\n", 
 		statistics[row][I_MIN_SHORT], statistics[row][I_AVG_SHORT], statistics[row][I_MAX_SHORT]);
+		
 	printf("Short Pulse Count:\t%4d\n", statistics[row][I_CNT_SHORT]);
 	
 	printf("Long  Pulse Length:\t%4d\t%4d\t%4d\n", 
 		statistics[row][I_MIN_LONG], statistics[row][I_AVG_LONG], statistics[row][I_MAX_LONG]);
+		
 	printf("Long  Pulse Count:\t%4d\n", statistics[row][I_CNT_LONG]);
-	printf("Message Count    :\t%4d\n", socktcnt);
+	printf("Pulses Count     :\t%4d\n", statistics[row][I_PULSES]);
+	printf("Dev Message Count:\t%4d\n", statistics[row][I_MSGS]);
+	printf("Ttl Message Count:\t%4d\n", socktcnt);
 	return(0);
 }
 
@@ -263,6 +264,156 @@ int check_n_write_socket(char *binary, char *chkbuf , int binary_count)
 		if ((millis() - sock_stamp) > 2000)	checks = -1;		
 	}
 	checks++;
+	return(0);
+}
+
+/*
+ *********************************************************************************
+ * WT440H weather station sensor FUCTION
+ *
+ * Global Parameters Used: pulse_array, Binary_array, r_index, p_index;
+ * p_length (as an argument)
+ *
+ * timing:
+ *
+ *           _   
+ * '1':   |_| |     (T,T)
+ *                 
+ * '0':   |___|     (2T)
+ * 
+ * Protocol Info from: ala-paavola.fi
+ *
+ * Codes:
+ *********************************************************************************/
+int wt440h(int p_length)
+{
+	int i;
+	int j;
+	// Check for WT440H. 
+	
+	// 2 periods start pulse each 1000 + 1000 uSec ( so 4 * 1000 uSec pulse )
+	// As the bits are FM modulated, the number of interrupts may be between 36 (all 0) and 72 (all 1)
+	//
+	if (p_length > 72)
+	{	
+		int pcnt = 0;
+		binary_count = 0;
+		j = r_index;
+		if  (  (pulse_array[j     % MAXDATASIZE] > 850) 
+			&& (pulse_array[j     % MAXDATASIZE] < 1150) 
+			&& (pulse_array[(j+1) % MAXDATASIZE] > 850)
+			&& (pulse_array[(j+1) % MAXDATASIZE] < 1150)
+			&& (pulse_array[(j+2) % MAXDATASIZE] > 850)
+			&& (pulse_array[(j+2) % MAXDATASIZE] < 1150)
+			&& (pulse_array[(j+3) % MAXDATASIZE] > 850)
+			&& (pulse_array[(j+3) % MAXDATASIZE] < 1150)
+			)
+		{
+			pcnt+=4;									// 4 pulses
+			j+=4;
+			binary[binary_count++]=1;					// but only 2 bits
+			binary[binary_count++]=1;
+			
+			for (i=0; i<34; i++)
+			{
+				if (   (pulse_array[ j % MAXDATASIZE] > 1800) 
+					&& (pulse_array[ j % MAXDATASIZE] < 2100) 
+					)
+				{
+					binary[binary_count++]=0;
+					pcnt+=1;
+					j+=1;
+					//printf("s ");
+				}
+				else
+				if (   (pulse_array[ j    % MAXDATASIZE] > 850) 
+					&& (pulse_array[ j    % MAXDATASIZE] < 1150) 
+					&& (pulse_array[(j+1) % MAXDATASIZE] > 850)
+					&& (pulse_array[(j+1) % MAXDATASIZE] < 1150)
+					)
+				{
+					binary[binary_count++]=1;
+					pcnt+=2;
+					j+=2;
+					//printf("l ");
+				}
+				else {
+					pcnt = 0;
+					binary_count = 0;
+					//printf("x\n");
+					return(0);
+				}
+			}//for
+					
+			// XXX We might want to do some checking of the message, now we have the pulse train length in pcnt.
+			// If we are here, there are probably same messages at position pulse_array[j+pcnt] !!
+			
+			if (binary_count > 0)
+			{
+				// Gather statistics, but no skipping of bits
+				//
+				if (sflg) add_statistics(I_WT440H, 1500, r_index, pcnt);
+				
+				int leader = 0; for (i=0; i<4; i++) leader = leader*2 + binary[i];
+				int address = 0; for (i=4; i<8; i++) address = address*2 + binary[i];
+				int channel = 0; for (i=8; i<10; i++) channel = channel*2 + binary[i];
+				int constant = 0; for (i=10; i<13; i++) constant = constant*2 + binary[i];
+				int humidity = 0; for (i=13; i<20; i++) humidity = humidity*2 + binary[i];
+				int temperature = 0; for (i=20; i<35; i++) temperature = temperature*2 + binary[i];
+				int parity = binary[i++];
+				
+				if (verbose)
+				{
+				// Print the binary code
+					printf("\n------------------------------------------------------\nWT440H: <");
+					for (i=0; i<binary_count; i++) {
+						printf("%d ",binary[i]);
+					}
+					printf(">\n");
+					// Print the address and device information
+					//
+					temperature=(temperature - 6400) * 10 /128;
+					
+					printf ("leader: %d, address: %d, channel: %d, constant: %d, humid: %d, temp: %d.%d, par: %d\n",
+						leader, address, channel, constant, humidity, temperature/10, temperature%10, parity);
+						
+					// When debugging, print the timing data too
+					//
+					if (debug==1) {
+						printf("Timing:: r_index: %5d, j: %d\n",r_index,j);
+						for (i=0; i<pcnt; i++)
+						{
+							printf("%03d ",pulse_array[(r_index+i)%MAXDATASIZE]);
+						}
+						printf("\n");
+					}
+					fflush(stdout);
+				}
+				
+				// Do communication to the daemon of print output
+				//if (socktcnt++ >999) socktcnt = 0;		// Transaction counter reset
+				socktcnt++;
+				sprintf(snd_buf, "%d,!A%dD%dF1", socktcnt%1000, address, channel);
+				
+				if (dflg)
+				{
+					//check_n_write_socket(binary, chk_buf, binary_count);
+					if (verbose) printf("Should-Have Send Buffer: %s\n",snd_buf);
+				}
+				else
+				{
+					if (verbose) printf("Send Buffer: %s\n",snd_buf);
+				}
+				
+				if (sflg) print_statistics(I_WT440H);
+					
+				// We know we can do this as we checked our p_length before
+				r_index = j;
+				if (r_index > MAXDATASIZE) r_index = r_index - MAXDATASIZE;
+			}//if
+		}
+		return(binary_count);
+	}
 	return(0);
 }
 
@@ -378,8 +529,9 @@ int kopou(int p_length)
 				}
 				
 				// Do communication to the daemon of print output
-				if (socktcnt++ >999) socktcnt = 0;		// Transaction counter reset
-				sprintf(snd_buf, "%d,!A%dD%dF1", socktcnt, address, unit);
+				//if (socktcnt++ >999) socktcnt = 0;		// Transaction counter reset
+				socktcnt++;
+				sprintf(snd_buf, "%d,!A%dD%dF1", socktcnt%1000, address, unit);
 				if (dflg) 
 				{
 					check_n_write_socket(binary, chk_buf, binary_count);
@@ -511,6 +663,7 @@ int livolo(int p_length)
 				
 				// Do communication to the daemon of print output
 				if (socktcnt++ >999) socktcnt = 0;		// Transaction counter reset
+				socktcnt++;
 				sprintf(snd_buf, "%d,!A%dD%dF1", socktcnt, address, unit);
 				
 				if (dflg) 
@@ -738,13 +891,13 @@ int action(int p_length)
 				}
 				
 				// Do communication to the daemon of print output
-				if (socktcnt++ >999) socktcnt = 0;		// Transaction counter reset
-				
+				//if (socktcnt++ >999) socktcnt = 0;		// Transaction counter reset
+				socktcnt++;
 				// Use jSson mesage format
 				sprintf(snd_buf, 
 					 "{\"tcnt\":\"%d\",\"action\":\"remote\",\"type\":\"raw\",\"message\":\"!A%dD%dF%d\"}", 
-							socktcnt,address,unit,onoff);
-				// sprintf(snd_buf, "%d,!A%dD%dF%d", socktcnt, address, unit, onoff);
+							socktcnt%1000,address,unit,onoff);
+				// sprintf(snd_buf, "%d,!A%dD%dF%d", socktcnt%1000, address, unit, onoff);
 				
 				if (dflg) 
 				{
@@ -828,13 +981,13 @@ int kaku(int p_length)
 			if (   (pulse_array[(j+131) % MAXDATASIZE] >  9000) 	// Last pulse of the train switch
 				&& (pulse_array[(j+131) % MAXDATASIZE] < 12000) )
 			{
-				if (debug) printf("kaku switch %d\n", pulse_array[(j+131) % MAXDATASIZE]);
+				if (debug) printf("\nkaku switch %d\n", pulse_array[(j+131) % MAXDATASIZE]);
 			}
 			else
 			if (   (pulse_array[(j+135) % MAXDATASIZE] >  9000) 	// Last pulse of the train dimmer
 				&& (pulse_array[(j+135) % MAXDATASIZE] < 12000) )
 			{
-				if (debug) printf("kaku dimmer %d\n", pulse_array[(j+135) % MAXDATASIZE]);
+				if (debug) printf("\nkaku dimmer %d\n", pulse_array[(j+135) % MAXDATASIZE]);
 			}
 			else
 			{
@@ -920,14 +1073,20 @@ int kaku(int p_length)
 					// Could be that our timing is setup up to critical
 					if (debug)
 					{
-						printf("Error:: Wrong Kaku. Binary index %d, p_length: %d ... ", binary_count, p_length);
+						printf("Error:: Wrong Kaku. Binary index %d, around pulse: %d, p_length: %d ...\n", 
+							binary_count, j-r_index, p_length);
+						printf("pulses: %d %d %d %d\n", pulse_array[(j)%MAXDATASIZE], pulse_array[(j+1)%MAXDATASIZE],
+													 pulse_array[(j+2)%MAXDATASIZE], pulse_array[(j+3)%MAXDATASIZE]);
 						binary_count = 0;
-						printf("Timing:: r_index: %5d, j: %d\n",r_index,j);
-						for (i=0; i<132; i++)
-						{
-							printf("%05d ",pulse_array[(r_index+i)%MAXDATASIZE]);
-						}
-						printf("\n");
+						//
+						// Need more debugging info, and print whole failed message, uncommment below
+						//
+						//printf("Timing:: r_index: %5d, j: %d\n",r_index,j);
+						//for (i=0; i<132; i++)
+						//{
+						//	printf("%05d ",pulse_array[(r_index+i)%MAXDATASIZE]);
+						//}
+						//printf("\n");
 					}
 					
 					// Only for Kaku, as we know no other protocol has such large 
@@ -958,7 +1117,9 @@ int kaku(int p_length)
 					printf("%d ",binary[i]);
 				}
 				printf(">\n"); 
-						
+				
+				// Print the pulse timing for each bit
+				//	
 				if (debug==1) {
 					printf("Timing:: r_index: %5d, j: %d\n",r_index,j);
 					for (i=0; i<132; i++)
@@ -992,29 +1153,29 @@ int kaku(int p_length)
 				if (binary[27] == 2) {
 					for (i=32; i<=35; i++) dimlevel = dimlevel * 2 + binary[i];
 				}
-				if (socktcnt++ > 999) socktcnt = 0;				// Transaction counter reset
-				
+				//if (socktcnt++ > 999) socktcnt = 0;				// Transaction counter reset
+				socktcnt++;
 				// If group, send other message than if it is regular button
 				if (group == 1) {
 					//sprintf(snd_buf, 
 					// "{ \"tcnt\":%d, \"action\":\"remote\", \"type\":\"raw\", \"message\":\"!A%dD%dG%d\"  }", 
-					//		socktcnt,address,unit,onoff);
+					//		socktcnt%1000,address,unit,onoff);
 					printf("Address: %d, Unit: %d, Group: %d\n",address,unit,group);
-					sprintf(snd_buf, "%d,!A%dD%dG%d", socktcnt,address,unit,group);	
+					sprintf(snd_buf, "%d,!A%dD%dG%d", socktcnt%1000 ,address, unit, group);	
 				}
 				else {
 					// sprintf(snd_buf, 
 					// "{ \"tcnt\":%d, \"action\":\"remote\", \"type\":\"raw\", \"message\":\"!A%dD%dF%d\"  }", 
-					//		socktcnt,address,unit,onoff);
+					//		socktcnt%1000 ,address,unit,onoff);
 					
 					// Remotes do not do dimlevel, but if necessary we can ...
 					if (onoff == 2) {
 						printf("Address: %d, Unit: %d, Dim: %d\n",address,unit,dimlevel);
-						sprintf(snd_buf, "%d,!A%dD%dFdP%d", socktcnt, address,unit,dimlevel);
+						sprintf(snd_buf, "%d,!A%dD%dFdP%d", socktcnt%1000, address, unit, dimlevel);
 					}
 					else {
 						printf("Address: %d, Unit: %d, Value: %d\n",address,unit,onoff);
-						sprintf(snd_buf, "%d,!A%dD%dF%d", socktcnt, address,unit,onoff);
+						sprintf(snd_buf, "%d,!A%dD%dF%d", socktcnt%1000, address, unit, onoff);
 					}
 				}
 				
@@ -1212,14 +1373,11 @@ int main (int argc, char **argv)
 	
 	// Vars for storing commandline options 
 
-	int kflg = 0;							// Kaku remote messages
-	int iflg = 0;							// Action remote messages
-	int errflg = 0;
-	
+	int errflg = 0;							// If set, there is a commandline parsing error
 	int p_length = 0;
 
-	char *hostname = "localhost";
-	char *port = PORT;
+	char *hostname = "localhost";			// Default setting for our host == this host
+	char *port = PORT;						// default port, 5000
 	
     extern char *optarg;
     extern int optind, optopt;
@@ -1233,7 +1391,7 @@ int main (int argc, char **argv)
 	// -i ; Impuls switches such as used for Action remotes
 	// -k ; Show recognized Kaku messages of length 32 and 36 binary bits ONLY
 	//
-    while ((c = getopt(argc, argv, ":123ac:dh:ikl:p:stvx")) != -1) {
+    while ((c = getopt(argc, argv, ":123ac:dh:l:p:stvx")) != -1) {
         switch(c) {
 		case '1':						// Obsolete! For compatibility with previous version
 		break;
@@ -1254,12 +1412,6 @@ int main (int argc, char **argv)
 			//if (tflg>0) errflg++;
             dflg++;						// Need daemon flag too, (implied)
 			hostname = optarg;
-		break;
-		case 'i':						// Impuls switches such as for Action
-			iflg = 1;
-		break;
-		case 'k':						// Kaku switches
-			kflg = 1;
 		break;
 		case 'l':						// Low Pass filter setting
 			low_pass = atoi(optarg);
@@ -1322,17 +1474,11 @@ int main (int argc, char **argv)
 	if (verbose == 1) {
 		
 		printf("The following options have been set:\n\n");
+		
 		printf("-v\t; Verbose option\n");
+		if (statistics>0)	printf("-s\t; Statistics option\n");
+		if (dflg>0)			printf("-d\t; Daemon option\n");
 
-		if (iflg>0) printf("-i\t; Impuls option\n");
-		if (kflg>0) printf("-k\t; Kaku option\n");
-		if (dflg>0) printf("-k\t; Daemon option\n");
-
-		printf("\n\n");
-		printf("header:\t\t%d\n",header);
-		printf("pulse time:\t%d\n",pulse_time);			// XXX 
-		printf("pulse_long:\t%d\n",pulse_long);
-		printf("footer:\t\t%d,\t%d\n",footer, footer);
 		printf("\n");			
 				 
 	}//if verbose
@@ -1395,7 +1541,7 @@ int main (int argc, char **argv)
 			}
 			else
 			{
-				printf("Flush:: r_index: %4d\n",r_index);
+				fprintf(stderr,"Buffer Flush:: r_index: %4d\n",r_index);
 			}
 			
 			// continue with interrupts. If data is not saved above, we will loose a complete buffer!!
@@ -1428,6 +1574,14 @@ int main (int argc, char **argv)
 				continue;
 			}
 			
+			// --------------------------- WT440H --------------------------------------
+			// // function wt440H returns Binary Count
+			//
+			if ( (ret = wt440h(p_length)) > 0 )
+			{
+				// As we recognized a temperature message, there is NO need to look at other formats
+				continue;
+			}
 			
 			// --------------------------- KLIKAAANKLIKUIT -----------------------------
 			// Check for Klikaanklikuit

@@ -4,9 +4,10 @@
 <file name="demo.cfg" server="192.168.2.102//home/pi/" local="130251855566734687" remote="130251855600000000" />
 <file name="database.cfg" server="192.168.2.102//home/pi/" local="130259710033089080" remote="130259710040000000" />
 <file name="database.cfg" server="192.168.2.101//home/pi/" local="130259710033089080" remote="130264953200000000" />
-<file name="database.cfg" server="192.168.2.51//home/pi/" local="130333077305103021" remote="130334359600000000" />
+<file name="database.cfg" server="192.168.2.51//home/pi/" local="130340001030638888" remote="130340003030000000" />
 <file name="demo.cfg" server="192.168.2.51//home/pi/" local="130251855566734687" remote="130316139260000000" />
-<file name="database.cfg" server="192.168.2.52//home/pi/" local="130336049614594627" remote="130338245280000000" />
-<file name="database.cfg" server="192.168.2.53//home/pi/" local="130333077305103021" remote="130334233670000000" />
+<file name="database.cfg" server="192.168.2.52//home/pi/" local="130340001030638888" remote="130340001050000000" />
+<file name="database.cfg" server="192.168.2.53//home/pi/" local="130340001030638888" remote="130340003660000000" />
 <file name="demo.cfg" server="192.168.2.52//home/pi/" local="130336635724197232" remote="130338245280000000" />
+<file name="demo.cfg" server="192.168.2.53//home/pi/" local="130336635724197232" remote="130340971200000000" />
 </dwsync>

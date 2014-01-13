@@ -55,7 +55,7 @@
 <file name="LamPI-1.7.js" server="192.168.2.51//home/pi/" local="130328725739891092" remote="130334359530000000" />
 <file name="index2.html" server="192.168.2.51//home/pi/" local="130327055129135907" remote="130334359530000000" />
 <file name="phpinfo.php" server="192.168.2.51//home/pi/" local="130220040330000000" remote="130316139280000000" />
-<file name="LamPI-1.7.js" server="192.168.2.53//home/pi/" local="130328725739891092" remote="130328725740000000" />
+<file name="LamPI-1.7.js" server="192.168.2.53//home/pi/" local="130336857897305419" remote="130340971200000000" />
 <file name="index2.html" server="192.168.2.53//home/pi/" local="130327055129135907" remote="130333056970000000" />
 <file name="backend_cfg.php" server="192.168.2.53//home/pi/" local="130312677616396937" remote="130330906840000000" />
 <file name="backend_lib.php" server="192.168.2.53//home/pi/" local="130330876667253315" remote="130330906910000000" />
@@ -68,4 +68,6 @@
 <file name="Licensing - Copyright.txt" server="192.168.2.52//home/pi/" local="130223662072524919" remote="130338245750000000" />
 <file name="protocol.txt" server="192.168.2.52//home/pi/" local="130279513725262081" remote="130338245750000000" />
 <file name="README.md" server="192.168.2.52//home/pi/" local="130336720914098072" remote="130338245750000000" />
+<file name="LICENSE" server="192.168.2.53//home/pi/" local="130338623417078009" remote="130340971200000000" />
+<file name="README.md" server="192.168.2.53//home/pi/" local="130336720914098072" remote="130340971200000000" />
 </dwsync>
