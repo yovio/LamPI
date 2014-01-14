@@ -250,7 +250,7 @@ int read_socket_and_transmit(int sockfd)
 			return(-2);								// code not connected
 		}
 	}
-		
+	
 	// Now we have a connection still or again ...
 	FD_ZERO(&fds);
 	FD_SET(sockfd, &fds);

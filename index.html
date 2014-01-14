@@ -7,10 +7,10 @@
 <body>
 
 <h1>LamPI Introduction</h1>
-<h5>LamPI is a Home Automation project for switching equipment in the house over 444 MHz senders/transmitters on a RaspberryPI.</h5>
-<p>You can find its GIT repository on <a href="https://github.com/platenspeler">https://github.com/platenspeler</a></p>
-<p><img src="gh-pages/room_screen_grey.JPG" width="962" height="632" /></p>
-<p>The screen above is one of the main screens of LamPI, and should give you a taste of what LamPI is abount. As you see, the GUI interface is designed to operate (and manage) all tasks for the connected devices and minimize the need for manual changing of configuration files etc. let alone making configuration changes at compile time.</p>
+<h5>LamPI is a Home Automation project for switching equipment in the house over 444 MHz transmitters/receivers on a RaspberryPI.</h5>
+<p>You can find its GIT repository on <a href="https://github.com/platenspeler">https://github.com/platenspeler</a>, documentation on http://platenspeler.github.io</p>
+<p><img src="gh-pages/screenshots/room_screen_grey.JPG" width="962" height="632" /></p>
+<p>The screen above is one of the main screens of LamPI, and should give you a taste of what LamPI is about. As you see, the GUI interface is designed to operate (and manage) all tasks for the connected devices and minimize the need for manual changing of configuration files etc. let alone making configuration changes at compile time.</p>
 <p>In case I missed something, please send me an email or make a note on this page. For the moment I'm the only author of LamPI so it can take a few days before I answer...</p>
 <h1>LamPI Introduction</h1>
 <p>The goal of my project was to provide an easy interface to the family to control the lights in our house. We had klikaanklikuit.nl switches and we have an iPad (and some Android phones and Laptops) and want to control our light switches with an easy-to-use GUI interface. This meant that I needed at least 2 components: A component that would control transmitter and receiver and handle low-level device commands, and a GUI in JavaScript/jQuery that would handle the human interaction. In order to store configuration information and for timing commands and unattended use, we would also need a daemon process serving in the background as well as a database (written in MySQL) to store configuration information.</p>
@@ -26,11 +26,32 @@
   <li><a href="gh-pages/timers.html">The Timers Screen</a></li>
   <li><a href="gh-pages/handsets.html">The Handsets Screen</a></li>
   <li><a href="gh-pages/config.html">The Config Screen</a></li>
-  <li>Transceiver interface; If you only want to use the LamPI-receiver  command-line to send/eceive 433MHz messages </li>
-  <li>Background information on LamPI and 433MHz receivers</li>
+  <li>Transceiver interface; If you only want to use the <a href="gh-pages/transceiver.html">LamPI-receiver  command-line</a> to send/receive 433MHz messages </li>
+  <li><a href="gh-pages/hardware.html">Background information  433MHz hardware for RaspberryPI</a></li>
   <li>Background information on the <a href="gh-pages/architecture.html">Architecture</a></li>
 </ul>
-<p>&nbsp;</p>
+<h1>What Switches, Dimmers and other devices are supported?</h1>
+<p>LamPI can support receiver devices (making transmitter modules for various brands is often easy). Also, several brand share almost the same protocol or work or can be made to work with minor modifications, Therefore, the list below is probably just a snapshot of a much larger list...</p>
+<h4>Receivers, Switches, Dimmers</h4>
+<ul>
+  <li>Klikaanklikuit switches, the new type</li>
+  <li>Action or Impuls switches</li>
+  <li>Livolo switches</li>
+  <li>Kopou switches</li>
+  <li>Elro (not tested, software is installed)</li>
+  <li>Blokker (not tested, software is installed)</li>
+  <li>Klikaanklikuit (old model with two wheels at he back, not tested)</li>
+</ul>
+<h4>Handsets and Remote Controls</h4>
+<ul>
+  <li>Klikaanklikuit remotes</li>
+  <li>Livolo 4-button keychain</li>
+  <li>Kopou 4-button keychain</li>
+</ul>
+<h4>Temperature Sensors</h4>
+<ul>
+  <li>WT-440H, mae by UPM/Esic</li>
+</ul>
 <h1>What Platform(s) does LamPI run on?</h1>
 <ul>
   <li>The web GUI of LamPI runs on every webserver in your network as it is implemented in Javascript/jQuery. That means that if you install it on a webserver in your network you can access the GUI User Interface from every browser in your network (and soon also from the internet). By default, the webserver runs fine on the RaspberryPI (you need the Raspberry anyway).<br>
