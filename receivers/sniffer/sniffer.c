@@ -125,6 +125,7 @@ int statistics [I_MAX_ROWS][I_MAX_COLS];
  *********************************************************************************/
 int init_statistics(int statistics[I_MAX_ROWS][I_MAX_COLS])
 {
+	// Brute force method. Just make everything 0
 	int i;
 	int j;
 	for (i=0; i<I_MAX_ROWS; i++)
@@ -151,15 +152,46 @@ int init_statistics(int statistics[I_MAX_ROWS][I_MAX_COLS])
 int add_statistics(int row, int split, int start, int length)
 {
 	int i;
+	int p_length = (p_index - r_index + MAXDATASIZE) % MAXDATASIZE;
+	statistics[row][T_READ_AHEAD] = p_length;
+	statistics[row][I_READ_AHEAD] += p_length;
+	statistics[row][T_SUM_SHORT] = 0;
+	statistics[row][T_CNT_SHORT] = 0;
+	statistics[row][T_MIN_SHORT] = 0;
+	statistics[row][T_MAX_SHORT] = 0;
+	statistics[row][T_SUM_LONG] = 0;
+	statistics[row][T_CNT_LONG] = 0;
+	statistics[row][T_MIN_LONG] = 0;
+	statistics[row][T_MAX_LONG] = 0;
+	
 	statistics[row][I_MSGS]++;
+	
 	for (i=0; i<length; i++)
 	{
-		statistics[row][I_PULSES]++;
 		int p = pulse_array[(start+i)%MAXDATASIZE];
-		if (p < split)
+		statistics[row][I_PULSES]++;
+		
+		if (p < split)								// Short pulse
 		{
+			// Statistics only for this message
+			if ((p<statistics[row][T_MIN_SHORT]) ||
+				(statistics[row][T_MIN_SHORT] == 0)) 
+			{
+				statistics[row][T_MIN_SHORT]= p;
+			}
+			else
+			if ((p>statistics[row][T_MAX_SHORT]) ||
+				(statistics[row][T_MAX_SHORT] == 0)) 
+			{
+				statistics[row][T_MAX_SHORT]= p;
+			}
+			statistics[row][T_SUM_SHORT] += p;
+			statistics[row][T_CNT_SHORT] ++;
+			statistics[row][T_AVG_SHORT]= (int) statistics[row][T_SUM_SHORT] / statistics[row][T_CNT_SHORT];
+			
+			// Global statistics, for every message of this device type
 			if ((p<statistics[row][I_MIN_SHORT]) ||
-			(statistics[row][I_MIN_SHORT] == 0)) 
+				(statistics[row][I_MIN_SHORT] == 0)) 
 			{
 				statistics[row][I_MIN_SHORT]= p;
 			}
@@ -169,12 +201,32 @@ int add_statistics(int row, int split, int start, int length)
 			{
 				statistics[row][I_MAX_SHORT]= p;
 			}
+			
 			statistics[row][I_SUM_SHORT] += p;
 			statistics[row][I_CNT_SHORT] ++;
 			statistics[row][I_AVG_SHORT]= (int) statistics[row][I_SUM_SHORT] / statistics[row][I_CNT_SHORT];
 		}
-		else
+		else								// This is a long pulse
 		{
+			// Statistics for this message only
+			//
+			if ((p<statistics[row][T_MIN_LONG]) ||
+				(statistics[row][T_MIN_LONG] == 0)) 
+			{
+				statistics[row][T_MIN_LONG]= p;
+			}
+			else
+			if ((p>statistics[row][T_MAX_LONG]) ||
+				(statistics[row][T_MAX_LONG] == 0)) 
+			{
+				statistics[row][T_MAX_LONG]= p;
+			}
+			statistics[row][T_SUM_LONG] += p;
+			statistics[row][T_CNT_LONG] ++;
+			statistics[row][T_AVG_LONG]= (int) statistics[row][T_SUM_LONG] / statistics[row][T_CNT_LONG];
+			
+			// Global statistics for this type of device
+			//
 			if ((p<statistics[row][I_MIN_LONG]) ||
 				(statistics[row][I_MIN_LONG] == 0)) 
 			{
@@ -186,6 +238,7 @@ int add_statistics(int row, int split, int start, int length)
 			{
 				statistics[row][I_MAX_LONG]= p;
 			}
+			
 			statistics[row][I_SUM_LONG] += p;
 			statistics[row][I_CNT_LONG] ++;
 			statistics[row][I_AVG_LONG]= (int) statistics[row][I_SUM_LONG] / statistics[row][I_CNT_LONG];
@@ -203,19 +256,31 @@ int add_statistics(int row, int split, int start, int length)
  *********************************************************************************/
 int print_statistics(int row)
 {
-	printf("\t\t\t MIN \t AVG \t MAX\n");
-	printf("Short Pulse Length:\t%4d\t%4d\t%4d\n", 
-		statistics[row][I_MIN_SHORT], statistics[row][I_AVG_SHORT], statistics[row][I_MAX_SHORT]);
-		
-	printf("Short Pulse Count:\t%4d\n", statistics[row][I_CNT_SHORT]);
+	printf("\nDevice Statistics\tAll Messages\t\t\tThis Message\n");
+	printf("Total/This msg\t\t MIN \t AVG \t MAX \t\t MIN \t AVG \tMAX\n");
 	
-	printf("Long  Pulse Length:\t%4d\t%4d\t%4d\n", 
-		statistics[row][I_MIN_LONG], statistics[row][I_AVG_LONG], statistics[row][I_MAX_LONG]);
+	printf("Short Pulse Length:\t%4d\t%4d\t%4d\t\t%4d\t%4d\t%4d\n", 
+		statistics[row][I_MIN_SHORT], statistics[row][I_AVG_SHORT], statistics[row][I_MAX_SHORT],
+		statistics[row][T_MIN_SHORT], statistics[row][T_AVG_SHORT], statistics[row][T_MAX_SHORT]
+		);
 		
-	printf("Long  Pulse Count:\t%4d\n", statistics[row][I_CNT_LONG]);
-	printf("Pulses Count     :\t%4d\n", statistics[row][I_PULSES]);
-	printf("Dev Message Count:\t%4d\n", statistics[row][I_MSGS]);
-	printf("Ttl Message Count:\t%4d\n", socktcnt);
+	printf("Short Pulse Count:\t%4d\t\t\t\t%4d\n", statistics[row][I_CNT_SHORT],statistics[row][T_CNT_SHORT]);
+	
+	printf("Long  Pulse Length:\t%4d\t%4d\t%4d\t\t%4d\t%4d\t%4d\n", 
+		statistics[row][I_MIN_LONG], statistics[row][I_AVG_LONG], statistics[row][I_MAX_LONG],
+		statistics[row][T_MIN_LONG], statistics[row][T_AVG_LONG], statistics[row][T_MAX_LONG]
+		);
+		
+	printf("Long  Pulse Count:\t%4d\t\t\t\t%4d\n", statistics[row][I_CNT_LONG],statistics[row][T_CNT_LONG]);
+	printf("Pulses Count     :\t%4d\t\t\t\t%4d\n", statistics[row][I_PULSES],
+		statistics[row][T_CNT_SHORT]+statistics[row][T_CNT_LONG]);
+	
+	printf("\nTotal/This msg\t\tAll Devices\t\t\tThis Device\n");
+	printf("Msg Count Ttl/Dev:\t%4d\t\t\t\t%4d\n", socktcnt, statistics[row][I_MSGS]);
+	printf("Read Ahead Buf   :\t%4d\t\t\t\t%4d\n",
+		statistics[row][I_READ_AHEAD]/statistics[row][I_MSGS],statistics[row][T_READ_AHEAD]);
+	printf("Dev Msgs Discard :\t\t\t\t\t%4d\n\n", statistics[row][I_MSGS_DISCARD]);
+
 	return(0);
 }
 
@@ -283,7 +348,21 @@ int check_n_write_socket(char *binary, char *chkbuf , int binary_count)
  * 
  * Protocol Info from: ala-paavola.fi
  *
- * Codes:
+ * bit 00-03 Leader
+ * bit 04-07 Address
+ * bit 08-09 Channel
+ * bit 10-12 Constant
+ * bit 13-20 Hunidity
+ * bit 21-34 Temperature
+ * bit 35    Parity
+ *
+ * The protocol is an FM encoded message of 36 bits. Therefore, the number of pulses
+ * needed to encode the message is NOT fixed. A 0 bit is just one LONG pulse, and a
+ * 1 is encoded as two pulse (alternating low-high).
+ * Therefore, reading such message can be a little bit more tricky as we do not know
+ * how far to read ahead is enough to have potentially received a whole message.
+ * 
+ * PULSE defines are found in the LamPI.h include file
  *********************************************************************************/
 int wt440h(int p_length)
 {
@@ -293,66 +372,82 @@ int wt440h(int p_length)
 	
 	// 2 periods start pulse each 1000 + 1000 uSec ( so 4 * 1000 uSec pulse )
 	// As the bits are FM modulated, the number of interrupts may be between 36 (all 0) and 72 (all 1)
-	//
+	// I make the assumpition that checking 6 pulses is not heavier on the system than
+	// checking 2 or 4 pulses first, as the compiler will probably break as soon
+	// as one of the conditions is false (and not evaluate all conditions)
 	if (p_length > 72)
 	{	
 		int pcnt = 0;
 		binary_count = 0;
 		j = r_index;
-		if  (  (pulse_array[j     % MAXDATASIZE] > 850) 
-			&& (pulse_array[j     % MAXDATASIZE] < 1150) 
-			&& (pulse_array[(j+1) % MAXDATASIZE] > 850)
-			&& (pulse_array[(j+1) % MAXDATASIZE] < 1150)
-			&& (pulse_array[(j+2) % MAXDATASIZE] > 850)
-			&& (pulse_array[(j+2) % MAXDATASIZE] < 1150)
-			&& (pulse_array[(j+3) % MAXDATASIZE] > 850)
-			&& (pulse_array[(j+3) % MAXDATASIZE] < 1150)
+		//
+		// The preamble of the WT440H has 4 bits, 1100 which means following 6 pulses
+		// if these pulses are found we assume that we might have a valid message
+		if  (  (pulse_array[j     % MAXDATASIZE] > WT440H_MIN_SHORT) 
+			&& (pulse_array[j     % MAXDATASIZE] < WT440H_MAX_SHORT) 
+			&& (pulse_array[(j+1) % MAXDATASIZE] > WT440H_MIN_SHORT)
+			&& (pulse_array[(j+1) % MAXDATASIZE] < WT440H_MAX_SHORT)
+			&& (pulse_array[(j+2) % MAXDATASIZE] > WT440H_MIN_SHORT)
+			&& (pulse_array[(j+2) % MAXDATASIZE] < WT440H_MAX_SHORT)
+			&& (pulse_array[(j+3) % MAXDATASIZE] > WT440H_MIN_SHORT)
+			&& (pulse_array[(j+3) % MAXDATASIZE] < WT440H_MAX_SHORT)
+			
+			&& (pulse_array[(j+4) % MAXDATASIZE] > WT440H_MIN_LONG)
+			&& (pulse_array[(j+4) % MAXDATASIZE] < WT440H_MAX_LONG)
+			&& (pulse_array[(j+5) % MAXDATASIZE] > WT440H_MIN_LONG)
+			&& (pulse_array[(j+5) % MAXDATASIZE] < WT440H_MAX_LONG)
 			)
 		{
-			pcnt+=4;									// 4 pulses
-			j+=4;
-			binary[binary_count++]=1;					// but only 2 bits
+			pcnt+=6;									// 6 pulses
+			j+=6;
+			binary[binary_count++]=1;					// but only 4 bits
 			binary[binary_count++]=1;
+			binary[binary_count++]=0;
+			binary[binary_count++]=0;
 			
-			for (i=0; i<34; i++)
+			
+			for (i=0; i<32; i++)						// 4 bits leader, 32 bits remaining
 			{
-				if (   (pulse_array[ j % MAXDATASIZE] > 1800) 
-					&& (pulse_array[ j % MAXDATASIZE] < 2100) 
+				if (   (pulse_array[ j % MAXDATASIZE] > WT440H_MIN_LONG) 
+					&& (pulse_array[ j % MAXDATASIZE] < WT440H_MAX_LONG) 
 					)
 				{
 					binary[binary_count++]=0;
 					pcnt+=1;
 					j+=1;
-					//printf("s ");
+					//printf("0 ");
 				}
 				else
-				if (   (pulse_array[ j    % MAXDATASIZE] > 850) 
-					&& (pulse_array[ j    % MAXDATASIZE] < 1150) 
-					&& (pulse_array[(j+1) % MAXDATASIZE] > 850)
-					&& (pulse_array[(j+1) % MAXDATASIZE] < 1150)
+				if (   (pulse_array[ j    % MAXDATASIZE] > WT440H_MIN_SHORT) 
+					&& (pulse_array[ j    % MAXDATASIZE] < WT440H_MAX_SHORT) 
+					&& (pulse_array[(j+1) % MAXDATASIZE] > WT440H_MIN_SHORT)
+					&& (pulse_array[(j+1) % MAXDATASIZE] < WT440H_MAX_SHORT)
 					)
 				{
 					binary[binary_count++]=1;
 					pcnt+=2;
 					j+=2;
-					//printf("l ");
+					//printf("1 ");
 				}
 				else {
+					statistics[I_WT440H][I_MSGS_DISCARD]++;
+					if (debug) {
+						printf("WT440H:: Failed: index %d, last 2 bits read: %4d %4d \n", binary_count,
+							pulse_array[ j % MAXDATASIZE], pulse_array[(j+1) % MAXDATASIZE]
+						);
+					}
 					pcnt = 0;
 					binary_count = 0;
-					//printf("x\n");
 					return(0);
 				}
 			}//for
 					
 			// XXX We might want to do some checking of the message, now we have the pulse train length in pcnt.
-			// If we are here, there are probably same messages at position pulse_array[j+pcnt] !!
+			// After all, the WT440H message contains a last parity bit for checking
 			
 			if (binary_count > 0)
 			{
-				// Gather statistics, but no skipping of bits
-				//
-				if (sflg) add_statistics(I_WT440H, 1500, r_index, pcnt);
+
 				
 				int leader = 0; for (i=0; i<4; i++) leader = leader*2 + binary[i];
 				int address = 0; for (i=4; i<8; i++) address = address*2 + binary[i];
@@ -362,6 +457,13 @@ int wt440h(int p_length)
 				int temperature = 0; for (i=20; i<35; i++) temperature = temperature*2 + binary[i];
 				int parity = binary[i++];
 				
+				// if leader != 11
+				
+				// if constant != 6 return(0);
+				
+				// Gather statistics, but no skipping of bits
+				//
+				if (sflg) add_statistics(I_WT440H, 1500, r_index, pcnt);
 				if (verbose)
 				{
 				// Print the binary code
@@ -486,6 +588,7 @@ int kopou(int p_length)
 				}
 				else
 				{
+					statistics[I_KOPOU][I_MSGS_DISCARD]++;
 					// printf("Error, not a Kopou message for binary index %d, r_index: %d\n", binary_count, r_index);
 					binary_count = 0;
 					break;
@@ -618,6 +721,7 @@ int livolo(int p_length)
 					//printf("l ");
 				}
 				else {
+					statistics[I_LIVOLO][I_MSGS_DISCARD]++;
 					pcnt = 0;
 					binary_count = 0;
 					//printf("x\n");
@@ -737,7 +841,6 @@ int action(int p_length)
 	int address = 0; 
 	int unit = 0;
 	int onoff = 0;
-#define ACTION_MAX_SHORT 280
 	
 	// Action messages are 12 bits of 4 pulses, and 2 pulses start
 	//
@@ -758,17 +861,17 @@ int action(int p_length)
 			j+=2;
 				
 			// Process the 12 databits, each consisting of 4 pulses
-			// And we already did the two first pulses. 100-220 for short
-			// and 240-600 work for KAKU.
+			// And we already did the two first pulses. 100-240 for short
+			// and 260-600 work for KAKU.
 			// TO also recognize keychain make longs 280-900
 
 			while (j < (r_index+48))					// total Must be 50
 			{
-				if (   (pulse_array[ j    % MAXDATASIZE] > 100) // Short
+				if (   (pulse_array[ j    % MAXDATASIZE] > 100) 			// Short
 					&& (pulse_array[ j    % MAXDATASIZE] < ACTION_MAX_SHORT) 
 					&& (pulse_array[(j+1) % MAXDATASIZE] > ACTION_MAX_SHORT) // Long
 					&& (pulse_array[(j+1) % MAXDATASIZE] < 900)  
-					&& (pulse_array[(j+2) % MAXDATASIZE] > 100) // Short
+					&& (pulse_array[(j+2) % MAXDATASIZE] > 100) 			// Short
 					&& (pulse_array[(j+2) % MAXDATASIZE] < ACTION_MAX_SHORT) 
 					&& (pulse_array[(j+3) % MAXDATASIZE] > ACTION_MAX_SHORT) // Long
 					&& (pulse_array[(j+3) % MAXDATASIZE] < 900)
@@ -779,24 +882,24 @@ int action(int p_length)
 				else 
 				if (   (pulse_array[ j    % MAXDATASIZE] > ACTION_MAX_SHORT) // Long
 					&& (pulse_array[ j    % MAXDATASIZE] < 900) 
-					&& (pulse_array[(j+1) % MAXDATASIZE] > 100) // Short
+					&& (pulse_array[(j+1) % MAXDATASIZE] > 100) 			// Short
 					&& (pulse_array[(j+1) % MAXDATASIZE] < ACTION_MAX_SHORT)
 					&& (pulse_array[(j+2) % MAXDATASIZE] > ACTION_MAX_SHORT) // Long
 					&& (pulse_array[(j+2) % MAXDATASIZE] < 900) 
-					&& (pulse_array[(j+3) % MAXDATASIZE] > 120) // Short
+					&& (pulse_array[(j+3) % MAXDATASIZE] > 100) 			// Short
 					&& (pulse_array[(j+3) % MAXDATASIZE] < ACTION_MAX_SHORT)
 					)
 				{
 					binary[binary_count++]=1;
 				}
 				else 
-				if (   (pulse_array[ j    % MAXDATASIZE] > 100) // Short
+				if (   (pulse_array[ j    % MAXDATASIZE] > 100) 			// Short
 					&& (pulse_array[ j    % MAXDATASIZE] < ACTION_MAX_SHORT) 
 					&& (pulse_array[(j+1) % MAXDATASIZE] > ACTION_MAX_SHORT) // Long
 					&& (pulse_array[(j+1) % MAXDATASIZE] < 900)
 					&& (pulse_array[(j+2) % MAXDATASIZE] > ACTION_MAX_SHORT) // Long
 					&& (pulse_array[(j+2) % MAXDATASIZE] < 900) 
-					&& (pulse_array[(j+3) % MAXDATASIZE] > 100) // Short
+					&& (pulse_array[(j+3) % MAXDATASIZE] > 100) 			// Short
 					&& (pulse_array[(j+3) % MAXDATASIZE] < ACTION_MAX_SHORT)
 					)
 				{
@@ -805,9 +908,9 @@ int action(int p_length)
 				else 
 				if (   (pulse_array[ j    % MAXDATASIZE] > ACTION_MAX_SHORT) // Long
 					&& (pulse_array[ j    % MAXDATASIZE] < 900) 
-					&& (pulse_array[(j+1) % MAXDATASIZE] > 100) // Short
+					&& (pulse_array[(j+1) % MAXDATASIZE] > 100) 			// Short
 					&& (pulse_array[(j+1) % MAXDATASIZE] < ACTION_MAX_SHORT)
-					&& (pulse_array[(j+2) % MAXDATASIZE] > 100) // Short
+					&& (pulse_array[(j+2) % MAXDATASIZE] > 100) 			// Short
 					&& (pulse_array[(j+2) % MAXDATASIZE] < ACTION_MAX_SHORT) 
 					&& (pulse_array[(j+3) % MAXDATASIZE] > ACTION_MAX_SHORT) // Long
 					&& (pulse_array[(j+3) % MAXDATASIZE] < 900)
@@ -819,12 +922,15 @@ int action(int p_length)
 				{
 					// If some bits arrive OK and some not, this will trigger
 					// and provide some insight
-					if ((debug) && (binary_count>1))
+					if ((debug) && (binary_count>1)) 
+					{
 						printf("Error:: Action: binary index %d, r_index: %d, 4-bytes: %d %d %d %d\n", 
 							binary_count, r_index,
 							pulse_array[j%MAXDATASIZE],pulse_array[(j+1)%MAXDATASIZE],
 							pulse_array[(j+2)%MAXDATASIZE],pulse_array[(j+3)%MAXDATASIZE]
 							);
+					}
+					statistics[I_KAKU][I_MSGS_DISCARD]++;
 					binary_count = 0;
 					return(0);
 				}
@@ -886,14 +992,15 @@ int action(int p_length)
 							printf("%03d ",pulse_array[(r_index+i)%MAXDATASIZE]);
 						}
 						printf("\n");
+						printf("p_length is:: %d\n", p_length);
 					}
 					fflush(stdout);
 				}
 				
-				// Do communication to the daemon of print output
-				//if (socktcnt++ >999) socktcnt = 0;		// Transaction counter reset
 				socktcnt++;
+				// Do communication to the daemon of print output
 				// Use jSson mesage format
+				
 				sprintf(snd_buf, 
 					 "{\"tcnt\":\"%d\",\"action\":\"remote\",\"type\":\"raw\",\"message\":\"!A%dD%dF%d\"}", 
 							socktcnt%1000,address,unit,onoff);
@@ -924,7 +1031,7 @@ int action(int p_length)
 	}
 	else
 	{
-		if (debug>1) printf("action p_length is %d\n",p_length);
+		if (debug>1) printf("WARNING:: action p_length is %d\n",p_length);
 	}
 	return(0);		
 }// action
@@ -1077,6 +1184,7 @@ int kaku(int p_length)
 							binary_count, j-r_index, p_length);
 						printf("pulses: %d %d %d %d\n", pulse_array[(j)%MAXDATASIZE], pulse_array[(j+1)%MAXDATASIZE],
 													 pulse_array[(j+2)%MAXDATASIZE], pulse_array[(j+3)%MAXDATASIZE]);
+						statistics[I_KAKU][I_MSGS_DISCARD]++;
 						binary_count = 0;
 						//
 						// Need more debugging info, and print whole failed message, uncommment below
@@ -1510,7 +1618,11 @@ int main (int argc, char **argv)
 			// and the buffer is full. this means p_index == r_index.
 			// The solution is to write the buffer and start again with p_index and r_index at the 
 			// current positions
-			// XXX Alternatively, one could discard the buffer as well. Therefore, only if verbose!!!
+			//
+			// NOTE: Using the -s flag for statistics will severly slow down the reader
+			//		which may lead to buffer overflow. If omitting -s avoid this condition please
+			//		consider to use it wisely!
+			// NOTE2: Alternatively, one could discard the buffer as well. Therefore, only if verbose!!!
 		
 			if (verbose == 1) {
 				printf("stop_ints::\t r_index: %d, p_index: %d\n",r_index, p_index); 

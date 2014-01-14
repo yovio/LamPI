@@ -24,21 +24,28 @@ extern "C"
 {
 #endif
 
+// 
+// WAIT settings for the daemon and sockets
+//
 #define SLEEP 50000								// Sleeptime uSec in daemon mode between two PING messages to LamPI-daemon
 #define MILLIWAIT 60000							// 60 milli secs is  minute
 
+// Default port setting
+//
 #define PORT "5000" 							// the port client will be connecting to 
 
-// Define TIming for Action
-#define P_ACTION_SHORT	120
-
-// Set the values for pulse_time. You are advised to take the value as lowest as possible for
-// your use. If you want Kaku only, set it to 260, but if you use action set it to 200 or so.
-// The last version of the receiver uses AUTO-discovery, if so choose P_AUTO higher (500).
+// Define Pulse /timing for devices
 //
+#define P_ACTION_SHORT	120
 #define P_AUTO	500								// Pulse time for Auto mode, must be little lower than pulse_long
 #define P_ACTION 150							// Pulse time for Action/Impulse receivers
 #define P_KAKU 260								// Pulse time for Kaku receivers
+#define ACTION_MAX_SHORT 280
+
+#define WT440H_MIN_SHORT 800
+#define WT440H_MAX_SHORT 1150
+#define WT440H_MIN_LONG 1800
+#define WT440H_MAX_LONG 2100
 
 // Define Row Indexes for statistics ARRAY, make sure I_MAX_ROWS is larger than the number
 // of receivers specified below....
@@ -57,21 +64,43 @@ extern "C"
 
 // Define Columns Indexes for statistics, I_MAX_COLS must be equal or larger than number of parameters
 // specified below.
-#define I_MAX_COLS 15
-
+// I_MSGS_DISCARD; The number of messages discarded after the first recognition pulses were successful
+//		it provides a measure how good the first few pulses can be used to identify pulses
+#define I_MAX_COLS 26
+//
+// General statistics
+//
 #define I_MSGS 0
-#define I_PULSES 1
-#define I_CNT_SHORT 2
-#define I_MIN_SHORT 3
-#define I_AVG_SHORT 4
-#define I_MAX_SHORT 5
-#define I_SUM_SHORT 6
-#define I_CNT_LONG 7
-#define I_MIN_LONG 8
-#define I_AVG_LONG 9
-#define I_MAX_LONG 10
-#define I_SUM_LONG 11
-#define I_MSGS_DISCARD 12
+#define I_MSGS_DISCARD 1
+#define I_PULSES 2
+#define I_READ_AHEAD 3
+#define T_READ_AHEAD 4
+//
+// Statistics the apply to all messages
+//
+#define I_CNT_SHORT 5
+#define I_MIN_SHORT 6
+#define I_AVG_SHORT 7
+#define I_MAX_SHORT 8
+#define I_SUM_SHORT 9
+#define I_CNT_LONG 10
+#define I_MIN_LONG 11
+#define I_AVG_LONG 12
+#define I_MAX_LONG 13
+#define I_SUM_LONG 14
+//
+// statistics that apply for This current message only
+//
+#define T_CNT_SHORT 15
+#define T_MIN_SHORT 16
+#define T_AVG_SHORT 17
+#define T_MAX_SHORT 18
+#define T_SUM_SHORT 19
+#define T_CNT_LONG 20
+#define T_MIN_LONG 21
+#define T_AVG_LONG 22
+#define T_MAX_LONG 23
+#define T_SUM_LONG 24
 
 
 // Define Buffer Sizes
