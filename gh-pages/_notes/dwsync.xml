@@ -16,4 +16,9 @@
 <file name="setup.html" server="192.168.2.53//home/pi/" local="130340107730910645" remote="130340115850000000" />
 <file name="transceiver.html" server="192.168.2.53//home/pi/" local="130340817989968802" remote="130340970470000000" />
 <file name="architecture.html" server="192.168.2.53//home/pi/" local="130340937754344267" remote="130340970400000000" />
+<file name="hardware.html" server="192.168.2.51//home/pi/" local="130342038160132168" remote="130342038200000000" />
+<file name="architecture.html" server="192.168.2.51//home/pi/" local="130340937754344267" remote="130342061810000000" />
+<file name="transceiver.html" server="192.168.2.51//home/pi/" local="130340817989968802" remote="130342061910000000" />
+<file name="rooms.html" server="192.168.2.51//home/pi/" local="130342083720143680" remote="130342083790000000" />
+<file name="scenes.html" server="192.168.2.51//home/pi/" local="130342083881208665" remote="130342083900000000" />
 </dwsync>

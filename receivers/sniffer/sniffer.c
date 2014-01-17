@@ -457,13 +457,19 @@ int wt440h(int p_length)
 				int temperature = 0; for (i=20; i<35; i++) temperature = temperature*2 + binary[i];
 				int parity = binary[i++];
 				
+				// decode temperature (step 1)
+				temperature=(temperature - 6400) * 10 /128;
+				
 				// if leader != 11
+				// Then break off
 				
 				// if constant != 6 return(0);
+				// then break off
 				
 				// Gather statistics, but no skipping of bits
 				//
 				if (sflg) add_statistics(I_WT440H, 1500, r_index, pcnt);
+				
 				if (verbose)
 				{
 				// Print the binary code
@@ -472,10 +478,9 @@ int wt440h(int p_length)
 						printf("%d ",binary[i]);
 					}
 					printf(">\n");
+					
 					// Print the address and device information
 					//
-					temperature=(temperature - 6400) * 10 /128;
-					
 					printf ("leader: %d, address: %d, channel: %d, constant: %d, humid: %d, temp: %d.%d, par: %d\n",
 						leader, address, channel, constant, humidity, temperature/10, temperature%10, parity);
 						
@@ -493,17 +498,25 @@ int wt440h(int p_length)
 				}
 				
 				// Do communication to the daemon of print output
-				//if (socktcnt++ >999) socktcnt = 0;		// Transaction counter reset
 				socktcnt++;
-				sprintf(snd_buf, "%d,!A%dD%dF1", socktcnt%1000, address, channel);
 				
 				if (dflg)
 				{
-					//check_n_write_socket(binary, chk_buf, binary_count);
-					if (verbose) printf("Should-Have Send Buffer: %s\n",snd_buf);
+					sprintf(snd_buf, 
+					 "{\"tcnt\":\"%d\",\"action\":\"weather\",\"type\":\"json\",\"address\":\"%d\",\"channel\":\"%d\",\"temperature\":\"%d.%d\",\"humidity\":\"%d\"}", 
+						socktcnt%1000,address,channel,temperature/10,temperature%10,humidity);
+					
+					// Do NOT use check_n_write_socket as weather stations will not
+					// send too many repeating
+					if (write(sockfd, snd_buf, strlen(snd_buf)) == -1) {
+						fprintf(stderr,"socket write error\n");
+					}	
+					
+					if (verbose) printf("Socket Sent Buffer: %s\n",snd_buf);
 				}
 				else
 				{
+					sprintf(snd_buf, "tcnt: %d, Address: %d, Channel: %d, Temp: %d\n", socktcnt%1000, address, channel, temperature);
 					if (verbose) printf("Send Buffer: %s\n",snd_buf);
 				}
 				
@@ -638,7 +651,6 @@ int kopou(int p_length)
 				if (dflg) 
 				{
 					check_n_write_socket(binary, chk_buf, binary_count);
-					// QQQ
 				}
 				else
 				{
@@ -984,6 +996,8 @@ int action(int p_length)
 						printf("%d ",binary[i]);
 					}
 					printf(">\n"); 
+					
+					printf ("address: %d, unit: %d, value: %d\n",address,unit,onoff);
 						
 					if (debug==1) {
 						printf("Timing:: r_index: %5d, j: %d\n",r_index,j);
@@ -1002,9 +1016,10 @@ int action(int p_length)
 				// Use jSson mesage format
 				
 				sprintf(snd_buf, 
-					 "{\"tcnt\":\"%d\",\"action\":\"remote\",\"type\":\"raw\",\"message\":\"!A%dD%dF%d\"}", 
+					 "{\"tcnt\":\"%d\",\"action\":\"handset\",\"type\":\"json\",\"message\":\"!A%dD%dF%d\"}", 
 							socktcnt%1000,address,unit,onoff);
-				// sprintf(snd_buf, "%d,!A%dD%dF%d", socktcnt%1000, address, unit, onoff);
+							
+				//sprintf(snd_buf, "%d,!A%dD%dF%d", socktcnt%1000, address, unit, onoff);
 				
 				if (dflg) 
 				{
